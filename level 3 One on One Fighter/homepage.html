@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One on One Fighter</title>
+    <link rel = "stylesheet" href = "homepage.css" />
+    <script src = "homepage.js"></script>
+    <script src = "fighter.js"></script>
+    <script>
+        let stat = "nothing";
+        let amount = 0;
+        const MyFighter = new fighter(6,6,6,30);
+        const EnemyFighter = new fighter(6,6,6,30);
+       function initialize(){
+        for(i = 0;i < 4;i++)
+        {
+            if (i<2)
+            {
+                stat = WhichStat();
+                amount = Modify(stat,true);
+                if(stat == "strength")
+                {
+                    MyFighter.AddStrength(amount);
+                }
+                if(stat == "cunning")
+                {
+                    MyFighter.AddCunning(amount);
+                }
+                if(stat == "speed")
+                {
+                    MyFighter.AddSpeed(amount);
+                }
+                if(stat == "fatigue")
+                {
+                    MyFighter.AddFatigue(amount);
+                }
+                stat = WhichStat();
+                amount = Modify(stat,true);
+                if(stat == "strength")
+                {
+                    EnemyFighter.AddStrength(amount);
+                }
+                if(stat == "cunning")
+                {
+                    EnemyFighter.AddCunning(amount);
+                }
+                if(stat == "speed")
+                {
+                    EnemyFighter.AddSpeed(amount);
+                }
+                if(stat == "fatigue")
+                {
+                    EnemyFighter.AddFatigue(amount);
+                }
+            }
+            else{
+                stat = WhichStat();
+                amount = Modify(stat,false);
+                if(stat == "strength")
+                {
+                    MyFighter.AddStrength(amount);
+                }
+                if(stat == "cunning")
+                {
+                    MyFighter.AddCunning(amount);
+                }
+                if(stat == "speed")
+                {
+                    MyFighter.AddSpeed(amount);
+                }
+                if(stat == "fatigue")
+                {
+                    MyFighter.AddFatigue(amount);
+                }
+                stat = WhichStat();
+                amount = Modify(stat,false);
+                if(stat == "strength")
+                {
+                    EnemyFighter.AddStrength(amount);
+                }
+                if(stat == "cunning")
+                {
+                    EnemyFighter.AddCunning(amount);
+                }
+                if(stat == "speed")
+                {
+                    EnemyFighter.AddSpeed(amount);
+                }
+                if(stat == "fatigue")
+                {
+                    EnemyFighter.AddFatigue(amount);
+                }
+            }
+        }
+        document.getElementById("p1").innerHTML = "Strength: " + MyFighter.GetStrength();
+        document.getElementById("p2").innerHTML = "Cunning: " + MyFighter.GetCunning();
+        document.getElementById("p3").innerHTML = "Speed: " + MyFighter.GetSpeed();
+        document.getElementById("p4").innerHTML = "Fatigue: " + MyFighter.GetFatigue();
+        document.getElementById("p5").innerHTML = "Strength: " + EnemyFighter.GetStrength();
+        document.getElementById("p6").innerHTML = "Cunning: " + EnemyFighter.GetCunning();
+        document.getElementById("p7").innerHTML = "Speed: " + EnemyFighter.GetSpeed();
+        document.getElementById("p8").innerHTML = "Fatigue: " + EnemyFighter.GetFatigue();
+        document.getElementById("p9").innerHTML = "Who will win?";
+        } 
+        /*finish actions*/
+
+        function Attack(){
+            
+            let EnemyAction = EnemyFighter.Action(MyFighter.GetFatigue());
+            let death = false;
+            let damage = 0;
+            let defense = 0;
+            if(EnemyAction == "finishing move")
+            {
+                death = EnemyFighter.FinishingMove(MyFighter.GetFatigue());
+                if(death)
+                {
+                    MyFighter.AddFatigue(-100);
+                    document.getElementById("p9").innerHTML = "Enemy won";
+                }
+                else{
+                    damage = MyFighter.Attack();
+                    EnemyFighter.AddFatigue(-damage);
+                }
+            }
+            if(EnemyAction == "attack")
+            {
+                damage = MyFighter.Attack();
+                EnemyFighter.AddFatigue(-damage);
+                damage = EnemyFighter.Attack();
+                MyFighter.AddFatigue(-damage);
+            }
+            if(EnemyAction == "defend")
+            {
+                damage = MyFighter.Attack();
+                defense = EnemyFighter.Defend();
+                if (damage > defense)
+                {
+                    damage = damage-defense;
+                    EnemyFighter.AddFatigue(-damage);
+                }
+                if (damage < defense)
+                {
+                    damage = parseInt(Math.random() * 7);
+                    EnemyFighter.AddFatigue(damage);
+                }
+            }
+            document.getElementById("p4").innerHTML = "Fatigue: " + MyFighter.GetFatigue();
+            document.getElementById("p8").innerHTML = "Fatigue: " + EnemyFighter.GetFatigue();
+        }
+        function Defend(){
+            
+            let EnemyAction = EnemyFighter.Action(MyFighter.GetFatigue());
+            let death = false;
+            let damage = 0;
+            let defense = 0;
+            if(EnemyAction == "finishing move")
+            {
+                death = EnemyFighter.FinishingMove(MyFighter.GetFatigue());
+                if(death)
+                {
+                    MyFighter.AddFatigue(-100);
+                    document.getElementById("p9").innerHTML = "Enemy won";
+                }
+                else{
+                    damage = parseInt(Math.random() * 7);
+                    MyFighter.AddFatigue(damage);
+                }
+            }
+            if(EnemyAction == "attack")
+            {
+                damage = EnemyFighter.Attack();
+                defense = MyFighter.Defend();
+                if (damage > defense)
+                {
+                    damage = damage-defense;
+                    MyFighter.AddFatigue(-damage);
+                }
+                if (damage < defense)
+                {
+                    damage = parseInt(Math.random() * 7);
+                    MyFighter.AddFatigue(damage);
+                }
+            }
+            if(EnemyAction == "defend")
+            {
+                damage = parseInt(Math.random() * 7);
+                MyFighter.AddFatigue(damage);
+                damage = parseInt(Math.random() * 7);
+                EnemyFighter.AddFatigue(damage);
+            }
+            document.getElementById("p4").innerHTML = "Fatigue: " + MyFighter.GetFatigue();
+            document.getElementById("p8").innerHTML = "Fatigue: " + EnemyFighter.GetFatigue();
+        }
+        function FinishingMovie(){
+            let EnemyAction = EnemyFighter.Action(MyFighter.GetFatigue());
+            let death = false;
+            let damage = 0;
+            let defense = 0;
+            death = MyFighter.FinishingMove(EnemyFighter.GetFatigue());
+            if(death)
+            {
+                EnemyFighter.AddFatigue(-100);
+                document.getElementById("p9").innerHTML = "You won";
+            }
+            else{
+                if(EnemyAction == "finishing move")
+                {
+                    death = EnemyFighter.FinishingMove(MyFighter.GetFatigue());
+                    if(death)
+                    {
+                        MyFighter.AddFatigue(-100);
+                        document.getElementById("p9").innerHTML = "Enemy won";
+                    }
+                }
+                if(EnemyAction == "attack")
+                {
+                    damage = EnemyFighter.Attack();
+                    MyFighter.AddFatigue(-damage);
+                }
+                if(EnemyAction == "defend")
+                {
+                    damage = parseInt(Math.random() * 7);
+                    EnemyFighter.AddFatigue(damage);
+                }
+            }
+            document.getElementById("p4").innerHTML = "Fatigue: " + MyFighter.GetFatigue();
+            document.getElementById("p8").innerHTML = "Fatigue: " + EnemyFighter.GetFatigue();
+        }
+    </script>
+</head>
+<body onload = "initialize();">
+    <div id="BothFighters">
+        <div id = "fighter">
+            <p>Your fighter</p>
+            <p id="p1"></p>
+            <p id="p2"></p>
+            <p id="p3"></p>
+            <p id="p4"></p>
+        </div>
+        <div id = "fighter">
+            <p>Enemy fighter</p>
+            <p id="p5"></p>
+            <p id="p6"></p>
+            <p id="p7"></p>
+            <p id="p8"></p>
+        </div>
+    </div>
+    <div id = "action">
+        <p id = "p9"></p>
+    </div>
+    <button onclick = "Attack();">Attack</button>
+    <button onclick = "Defend();">Defend</button>
+    <button onclick = "FinishingMovie();">FinishingMove</button>
+</body>
+</html>
